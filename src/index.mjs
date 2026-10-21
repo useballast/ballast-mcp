@@ -35,7 +35,10 @@ export function createServer(options = {}) {
       tools: tools.map((t) => ({
         name: t.name,
         description: t.description,
-        inputSchema: t.inputSchema,
+        inputSchema: {
+          type: "object",
+          ...t.inputSchema,
+        },
       })),
     };
   });

@@ -1,6 +1,6 @@
 {
   "name": "ballast-mcp",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Model Context Protocol (MCP) server connector for Ballast — cold email platform with dedicated egress relays and bounce circuit breakers.",
   "main": "bin/index.mjs",
   "bin": {

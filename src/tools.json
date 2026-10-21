@@ -52,6 +52,7 @@
     "name": "add_mailbox",
     "description": "Connect a mailbox Tests SMTP and IMAP login first and saves only when both pass. Google needs an app password. Microsoft 365 connects with OAuth from the dashboard.",
     "inputSchema": {
+      "type": "object",
       "oneOf": [
         {
           "type": "object",
