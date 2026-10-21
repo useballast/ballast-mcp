@@ -1,6 +1,6 @@
 # Ballast MCP Server
 
-[![Glama](https://glama.ai/mcp/servers/useballast/ballast-mcp/badge)](https://glama.ai/mcp/servers/useballast/ballast-mcp)
+[![Ballast - Cold Email MCP server – quality and maintenance score on Glama](https://glama.ai/mcp/servers/useballast/ballast-mcp/badges/score.svg)](https://glama.ai/mcp/servers/useballast/ballast-mcp)
 [![Protocol](https://img.shields.io/badge/MCP-Protocol_2026-orange.svg)](https://modelcontextprotocol.io)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
