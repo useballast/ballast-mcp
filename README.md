@@ -1,72 +1,54 @@
 # Ballast MCP Server
 
-[![Smithery](https://img.shields.io/badge/Smithery-Listed-brightgreen.svg)](https://smithery.ai)
 [![Glama](https://img.shields.io/badge/Glama-MCP_Server-blue.svg)](https://glama.ai/mcp/servers)
 [![Protocol](https://img.shields.io/badge/MCP-Protocol_2026-orange.svg)](https://modelcontextprotocol.io)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-Official [Model Context Protocol (MCP)](https://modelcontextprotocol.io) server connector for **[Ballast](https://ballast.to)** — cold email platform with dedicated egress relays, automated bounce circuit breakers, warmup placement monitor, and unified inbox (Unibox).
+Official [Model Context Protocol (MCP)](https://modelcontextprotocol.io) server implementation for **[Ballast](https://ballast.to)** — cold email software with dedicated egress relays, automated bounce circuit breakers, warmup placement monitor, and unified inbox (Unibox).
 
-Connect **Claude**, **Cursor**, **ChatGPT**, **Claude Code**, **Windsurf**, or **Zed** directly to your Ballast workspace. Let your AI agent inspect domain health, draft and launch sequences, read replies, and track campaigns.
+This repository contains the standalone MCP server package that runs locally via standard I/O (stdio) and connects AI assistants (Claude Desktop, Cursor, Claude Code, Zed, etc.) to your Ballast workspace.
 
 ---
 
-## Quick Start
+## Features
 
-### 1. Get your API Key
-Sign in to [ballast.to](https://ballast.to) and copy an API key from **[Settings > API Keys](https://ballast.to/settings/api-keys)** (starts with `bl_`).
+- **Deliverability & DNS Diagnostics**: Inspect secondary domains for SPF, DKIM, DMARC alignment, MX configuration, and blacklist health.
+- **Campaign & Sequence Management**: Build multi-step outbound sequences, set A/B variants, configure sending delays, and verify launch checklists.
+- **Automated Bounce Circuit Breakers**: Monitor campaign placement rates and pause sends if bounce rate thresholds are crossed.
+- **Unified Inbox (Unibox)**: Read and summarize customer email threads, check sentiment classification, and draft human-confirmed replies.
+- **Safe by Default**: Destructive operations (launching campaigns, sending emails, deleting data) require explicit two-step confirmation with a 10-minute HMAC token.
 
-### 2. Connect your AI Client
+---
 
-#### Claude Code
+## Installation & Setup
+
+### Requirements
+- Node.js >= 18.0.0
+- A Ballast workspace API key from **[Settings > API Keys](https://ballast.to/settings/api-keys)** (starts with `bl_`).
+
+### Run via npx (Recommended)
+You can run the server directly without manual installation:
 ```bash
-claude mcp add --transport http ballast https://ballast.to/api/mcp \
-  --header "Authorization: Bearer YOUR_BALLAST_API_KEY"
+BALLAST_API_KEY="bl_your_key_here" npx -y ballast-mcp
 ```
 
-To load all 92 tools (the full set):
+### Install from Source
 ```bash
-claude mcp add --transport http ballast "https://ballast.to/api/mcp?toolset=full" \
-  --header "Authorization: Bearer YOUR_BALLAST_API_KEY"
+git clone https://github.com/useballast/ballast-mcp.git
+cd ballast-mcp
+npm install
+npm start
 ```
 
 ---
 
-#### Cursor
-Add the following to `~/.cursor/mcp.json` (or your project's `.cursor/mcp.json`):
+## Client Configuration
 
-```json
-{
-  "mcpServers": {
-    "ballast": {
-      "url": "https://ballast.to/api/mcp",
-      "headers": {
-        "Authorization": "Bearer YOUR_BALLAST_API_KEY"
-      }
-    }
-  }
-}
-```
+### Claude Desktop
+Add Ballast to your `claude_desktop_config.json`:
+- **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+- **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
 
-*Tip: Cursor works best with ~40 tools across all connected servers. Ballast serves 30 core tools by default. If you need the full 92 tools, add `"x-ballast-toolset": "full"` to the headers or use `"url": "https://ballast.to/api/mcp?toolset=full"`.*
-
----
-
-#### Claude Desktop
-Add to your Claude Desktop configuration (`claude_desktop_config.json`):
-
-```json
-{
-  "mcpServers": {
-    "ballast": {
-      "command": "npx",
-      "args": ["-y", "ballast-mcp", "--key", "YOUR_BALLAST_API_KEY"]
-    }
-  }
-}
-```
-
-Or via environment variable:
 ```json
 {
   "mcpServers": {
@@ -74,7 +56,7 @@ Or via environment variable:
       "command": "npx",
       "args": ["-y", "ballast-mcp"],
       "env": {
-        "BALLAST_API_KEY": "YOUR_BALLAST_API_KEY"
+        "BALLAST_API_KEY": "bl_your_api_key_here"
       }
     }
   }
@@ -83,65 +65,90 @@ Or via environment variable:
 
 ---
 
-#### Claude.ai & ChatGPT (OAuth Sign-in)
-Apps that support web connectors open Ballast directly:
-1. In Claude.ai or ChatGPT, add a custom connector with URL: `https://ballast.to/api/mcp`
-2. You will be redirected to Ballast to sign in, pick the workspace, and approve access.
-3. Access tokens automatically refresh and can be revoked at any time from **Settings > API Keys > Connected Apps**.
+### Cursor
+Add to `~/.cursor/mcp.json` (or your project's `.cursor/mcp.json`):
+
+```json
+{
+  "mcpServers": {
+    "ballast": {
+      "command": "npx",
+      "args": ["-y", "ballast-mcp"],
+      "env": {
+        "BALLAST_API_KEY": "bl_your_api_key_here"
+      }
+    }
+  }
+}
+```
+
+---
+
+### Claude Code
+```bash
+claude mcp add --transport stdio ballast -- npx -y ballast-mcp --key=bl_your_api_key_here
+```
+
+*(Note: For clients that support remote Streamable HTTP directly, you can also use `--transport http ballast https://ballast.to/api/mcp --header "Authorization: Bearer bl_..."`)*
+
+---
+
+## Tools Reference
+
+The server implements 30 core tools organized by functional area:
+
+| Tool | Category | Description |
+| :--- | :--- | :--- |
+| `whoami` | Workspace | Get authenticated user, active workspace, and permission role. |
+| `get_overview` | Workspace | High-level workspace analytics (emails sent, replies, positive sentiment, bounce rates). |
+| `get_billing` | Workspace | Plan details, sending allowances, dedicated IPs, and usage limits. |
+| `check_domain` | Domains | Run real-time DNS check (SPF, DKIM, DMARC, MX) and blacklist scans. |
+| `list_domains` | Domains | List configured sending domains and their verification status. |
+| `add_domain` | Domains | Add a new secondary domain to the workspace. |
+| `list_mailboxes` | Mailboxes | List connected Google Workspace and Microsoft 365 mailboxes with daily limits. |
+| `add_mailbox` | Mailboxes | Connect an external mailbox for outbound outreach. |
+| `list_leads` | Leads | Search and filter contacts in your workspace. |
+| `import_leads` | Leads | Import lead contacts with custom variables and tag assignment. |
+| `list_lead_lists` | Leads | List organized lead segments and member counts. |
+| `add_suppressions` | Leads | Add email addresses or root domains to workspace-wide do-not-contact lists. |
+| `list_campaigns` | Campaigns | List outbound sequences with sending schedules and statuses. |
+| `create_campaign` | Campaigns | Create a new cold email campaign. |
+| `get_campaign` | Campaigns | Retrieve campaign settings, step variants, and assigned mailboxes. |
+| `update_campaign` | Campaigns | Update campaign schedule, daily quotas, or track settings. |
+| `set_sequence` | Campaigns | Configure sequence steps, delays, subject lines, and body copy. |
+| `write_sequence` | Campaigns | Generate or polish multi-step sequence copy using AI. |
+| `add_leads_to_campaign` | Campaigns | Enroll lead segments into an active sequence. |
+| `preview_campaign` | Campaigns | Preview lead send distribution across mailboxes and first send timings. |
+| `get_launch_checklist` | Campaigns | Check domain alignment, sender warmup, and lead hygiene before launch. |
+| `launch_campaign` | Campaigns | Launch sequence sending (*requires confirm token*). |
+| `pause_campaign` | Campaigns | Immediately pause sending for a campaign. |
+| `get_campaign_stats` | Campaigns | Performance counters (sent, open, click, bounce, reply rates). |
+| `get_campaign_analytics` | Campaigns | Detailed performance broken down by mailbox provider, step, and variant. |
+| `get_unibox_filters` | Unibox | Retrieve unified inbox filter presets and label counts. |
+| `list_threads` | Unibox | List incoming recipient replies and conversation threads. |
+| `get_thread` | Unibox | Inspect full thread message history, headers, and lead details. |
+| `send_reply` | Unibox | Send an email reply from the thread's assigned mailbox (*requires confirm token*). |
+| `label_thread` | Unibox | Apply sentiment labels (Interested, Meeting Booked, Not Interested, Out of Office). |
 
 ---
 
 ## Safety: Two-Step Confirmations
 
-Ballast guards your domain reputation: **no emails are ever sent by accident**.
-
-Any destructive or sending operation (e.g., `launch_campaign`, `send_reply`, `import_leads`, `delete_*`) requires two steps:
-1. **Preview call**: The server returns a human-readable summary of what will happen (e.g., *"Will email 312 leads from 6 mailboxes starting Tue 09:00"*) alongside a 10-minute HMAC confirmation token.
-2. **Execution call**: Your AI shows the preview to you and only executes the second call once you say **yes**.
-
----
-
-## Available Tools
-
-### Core Toolset (30 tools — enabled by default)
-
-| Group | Tools | Description |
-| :--- | :--- | :--- |
-| **Workspace & Billing** | `whoami`, `get_billing`, `get_overview` | Workspace status, plan tier, sent emails, reply rates, bounce rates. |
-| **Domains & Mailboxes** | `check_domain`, `list_domains`, `add_domain`, `list_mailboxes`, `add_mailbox` | Verify SPF, DKIM, DMARC, blacklist status, and connected mailboxes. |
-| **Leads & Lists** | `import_leads`, `list_leads`, `list_lead_lists`, `add_suppressions` | Manage recipient lists, clean leads, and domain suppression. |
-| **Campaigns & Sequences** | `list_campaigns`, `create_campaign`, `get_campaign`, `update_campaign`, `set_sequence`, `write_sequence`, `add_leads_to_campaign`, `preview_campaign`, `get_launch_checklist`, `launch_campaign`, `pause_campaign`, `get_campaign_stats`, `get_campaign_analytics` | End-to-end cold email sequence creation, launch checklist, circuit breakers, and step stats. |
-| **Unibox & Replies** | `get_unibox_filters`, `list_threads`, `get_thread`, `send_reply`, `label_thread` | Unified inbox management, thread sentiment classification, and safe replies. |
-
-### Full Toolset (92 tools)
-Includes detailed relay pool management, proxy IP assignment, custom CNAME tracking domains, webhook subscriptions, lead export, and per-variant step analytics.
-
-To switch to the full set, pass `?toolset=full` on the URL or the HTTP header `x-ballast-toolset: full`.
+To prevent inadvertent mass sends or data deletion:
+1. When calling `launch_campaign`, `send_reply`, or deletion tools without a `confirm_token`, the server generates a dry-run preview describing the exact outcome (e.g. *"Will send 320 emails across 6 mailboxes"*) and issues an HMAC token.
+2. The AI presents the preview to the user.
+3. The action executes only when the user approves and the AI passes the `confirm_token`.
 
 ---
 
-## Example Prompts
+## Development
 
-Here are examples of what you can ask your AI:
-
-- *"Check the deliverability of our domains and tell me if any SPF or DMARC record is missing."*
-- *"Which of our mailboxes had the highest bounce rate over the last 7 days?"*
-- *"Draft a 3-step cold email sequence for our B2B agency campaign and show me the preview."*
-- *"Are there any new positive replies in Unibox this morning that need a response?"*
-- *"Pause campaign 'Outreach Q4' if the bounce rate exceeded 4%."*
-
----
-
-## Architecture & Endpoints
-
-- **Live MCP Endpoint**: `https://ballast.to/api/mcp`
-- **Full Toolset URL**: `https://ballast.to/api/mcp?toolset=full`
-- **Protocol**: Model Context Protocol (MCP) HTTP / SSE / JSON-RPC 2.0
-- **Authentication**: Bearer API Key (`Authorization: Bearer bl_...`) or OAuth 2.0
-- **Documentation**: [https://ballast.to/docs/mcp](https://ballast.to/docs/mcp)
-- **REST API Specs**: [https://ballast.to/docs/api](https://ballast.to/docs/api)
-
----
+```bash
+git clone https://github.com/useballast/ballast-mcp.git
+cd ballast-mcp
+npm install
+npm test # or npm start
+```
 
 ## License
 
