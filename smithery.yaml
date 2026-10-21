@@ -1,0 +1,24 @@
+# Smithery configuration for Ballast MCP Server
+# https://smithery.ai/docs/config
+
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    required:
+      - apiKey
+    properties:
+      apiKey:
+        type: string
+        description: "Your Ballast API Key (starts with bl_). Generate one at https://ballast.to/settings/api-keys"
+      toolset:
+        type: string
+        enum: ["core", "full"]
+        default: "core"
+        description: "Tool set to load: 'core' (30 essential tools) or 'full' (all 92 tools)."
+  command: "npx"
+  args:
+    - "-y"
+    - "ballast-mcp"
+    - "--key"
+    - "${config.apiKey}"

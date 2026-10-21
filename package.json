@@ -1,0 +1,34 @@
+{
+  "name": "ballast-mcp",
+  "version": "1.0.0",
+  "description": "Model Context Protocol (MCP) server connector for Ballast — cold email platform with dedicated egress relays and bounce circuit breakers.",
+  "main": "bin/index.mjs",
+  "bin": {
+    "ballast-mcp": "./bin/index.mjs"
+  },
+  "type": "module",
+  "scripts": {
+    "start": "node bin/index.mjs"
+  },
+  "keywords": [
+    "mcp",
+    "mcp-server",
+    "model-context-protocol",
+    "ballast",
+    "cold-email",
+    "email-deliverability",
+    "claude",
+    "cursor",
+    "ai-agent"
+  ],
+  "author": "Ballast (https://ballast.to)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/useballast/ballast-mcp"
+  },
+  "bugs": {
+    "url": "https://github.com/useballast/ballast-mcp/issues"
+  },
+  "homepage": "https://ballast.to/docs/mcp"
+}
