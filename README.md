@@ -4,7 +4,7 @@
 [![Protocol](https://img.shields.io/badge/MCP-Protocol_2026-orange.svg)](https://modelcontextprotocol.io)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-Official [Model Context Protocol (MCP)](https://modelcontextprotocol.io) server implementation for **[Ballast](https://ballast.to)** — cold email software with dedicated egress relays, automated bounce circuit breakers, warmup placement monitor, and unified inbox (Unibox).
+Official [Model Context Protocol (MCP)](https://modelcontextprotocol.io) server implementation for **[Ballast](https://ballast.to)** — connect AI agents to manage cold email campaigns, deliverability warmup, lead lists, and inbox replies.
 
 This repository contains the standalone MCP server package that runs locally via standard I/O (stdio) and connects AI assistants (Claude Desktop, Cursor, Claude Code, Zed, etc.) to your Ballast workspace.
 
