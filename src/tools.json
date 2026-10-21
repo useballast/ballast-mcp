@@ -1,7 +1,7 @@
 [
   {
     "name": "add_domain",
-    "description": "Add a sending domain and check it For setting up DNS before any mailbox is connected. Runs the full check (MX, SPF, DKIM, DMARC, blacklists) and returns the report with a fix for each problem.",
+    "description": "Connect a new sending domain to the workspace and verify DNS. Registers a new sending domain under the workspace, saves it, and immediately initiates DNS and deliverability verification (MX, SPF, DKIM, DMARC, blacklists). USE THIS when setting up a new custom domain to send cold emails from Ballast. DO NOT use to test an external or unverified domain without adding it to the workspace (use check_domain instead) or to list existing domains (use list_domains instead).",
     "inputSchema": {
       "type": "object",
       "properties": {
@@ -217,7 +217,7 @@
   },
   {
     "name": "check_domain",
-    "description": "Grade a sending domain Checks MX, SPF, DKIM, DMARC, blacklists and domain age. Results are cached for 10 minutes.",
+    "description": "Inspect DNS and deliverability health of any domain without adding it. Performs a live, read-only diagnostic check on any domain name (MX, SPF, DKIM, DMARC records, blacklist status, and domain age) with actionable DNS fix instructions. Results are cached for 10 minutes. USE THIS to test or grade arbitrary prospect or candidate domains without saving or connecting them. DO NOT use to configure a domain for sending in Ballast (use add_domain instead) or to view already configured sending domains (use list_domains instead).",
     "inputSchema": {
       "type": "object",
       "properties": {
@@ -277,7 +277,7 @@
   },
   {
     "name": "get_campaign_analytics",
-    "description": "Sends, replies and bounces by campaign, mailbox and email provider, plus reply sentiment",
+    "description": "Multi-dimensional performance breakdown by provider, mailbox, and sentiment. Returns granular aggregate performance metrics broken down across email providers (Google Workspace, Microsoft 365, etc.), individual sending mailboxes, and reply sentiment classifications. USE THIS to diagnose deliverability issues across providers or compare mailbox performance. DO NOT use for day-by-day time-series data (use get_campaign_stats instead) or macro workspace KPI totals (use get_overview instead).",
     "inputSchema": {
       "type": "object",
       "properties": {
@@ -291,7 +291,7 @@
   },
   {
     "name": "get_campaign_stats",
-    "description": "Daily emails sent, replies, bounces and opens For all campaigns, or one with campaignId. Days are calendar days in the workspace's timezone.",
+    "description": "Daily time-series email metrics for a campaign or all campaigns. Returns daily time-series counts (day-by-day sent, replied, opened, bounced, positive) for a specific campaign (pass campaignId) or all campaigns combined over the last N days. USE THIS to plot charts or view daily performance trends over time. DO NOT use for high-level workspace summary totals (use get_overview instead) or for multi-dimensional breakdowns by ESP provider, mailbox, or step (use get_campaign_analytics instead).",
     "inputSchema": {
       "type": "object",
       "properties": {
@@ -323,7 +323,7 @@
   },
   {
     "name": "get_overview",
-    "description": "Workspace dashboard: sends, replies, positive replies, bounces, won, mailbox health and when and where replies come from Counts for the last 7, 30 or 90 days plus the period before for trends. Positive replies and sentiment use the label each reply thread carries now.",
+    "description": "Workspace-wide aggregate email outreach totals and trends. Returns macro-level aggregate counts (total sends, replies, positive replies, bounces, won deals) across the entire workspace for the last 7, 30, or 90 days, comparing against the prior period for trend analysis. USE THIS for high-level workspace executive summaries. DO NOT use for a single campaign (use get_campaign_stats instead) or for provider/mailbox breakdowns (use get_campaign_analytics instead).",
     "inputSchema": {
       "type": "object",
       "properties": {
@@ -624,7 +624,7 @@
   },
   {
     "name": "list_domains",
-    "description": "List sending domains with their health Same checks and score as the public checker, re-run daily.",
+    "description": "List all connected sending domains and their verification status. Returns all custom sending domains currently registered in the workspace, including their mailbox count, latest deliverability scores, and verification history. USE THIS to review existing sending infrastructure. DO NOT use to register a new domain (use add_domain instead) or to test an external domain without adding it (use check_domain instead).",
     "inputSchema": {
       "type": "object",
       "properties": {}
@@ -1031,7 +1031,7 @@
   },
   {
     "name": "write_sequence",
-    "description": "Write emails with AI from the offer profile Drafts a whole sequence (mode sequence) or a new version of one variant (rewrite, shorter, angle), using only facts from the workspace's offer profile and lead fields. Results are saved as new variants and never overwrite existing text; an empty campaign gets the drafted steps. Each email is checked against the content checklist; anything still failing comes back in problems. Needs a saved offer profile (update_offer_profile).",
+    "description": "Write emails with AI from the offer profile. Drafts a whole sequence (mode sequence) or a new version of one variant (rewrite, shorter, angle), using only facts from the workspace offer profile and lead fields. Results are saved as new variants and never overwrite existing text; an empty campaign gets the drafted steps. Each email is checked against the content checklist; anything still failing comes back in problems. Requires that the workspace offer profile is configured in Ballast settings (or updated via update_offer_profile).",
     "inputSchema": {
       "type": "object",
       "properties": {
