@@ -1,6 +1,6 @@
 # Ballast MCP Server
 
-[![Glama](https://img.shields.io/badge/Glama-MCP_Server-blue.svg)](https://glama.ai/mcp/servers)
+[![Glama](https://glama.ai/mcp/servers/useballast/ballast-mcp/badge)](https://glama.ai/mcp/servers/useballast/ballast-mcp)
 [![Protocol](https://img.shields.io/badge/MCP-Protocol_2026-orange.svg)](https://modelcontextprotocol.io)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
