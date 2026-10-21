@@ -100,11 +100,11 @@ The server implements 30 core tools organized by functional area:
 | Tool | Category | Description |
 | :--- | :--- | :--- |
 | `whoami` | Workspace | Get authenticated user, active workspace, and permission role. |
-| `get_overview` | Workspace | High-level workspace analytics (emails sent, replies, positive sentiment, bounce rates). |
+| `get_overview` | Workspace | Workspace-wide aggregate totals and trends across all campaigns (sends, replies, sentiment, bounces). |
 | `get_billing` | Workspace | Plan details, sending allowances, dedicated IPs, and usage limits. |
-| `check_domain` | Domains | Run real-time DNS check (SPF, DKIM, DMARC, MX) and blacklist scans. |
-| `list_domains` | Domains | List configured sending domains and their verification status. |
-| `add_domain` | Domains | Add a new secondary domain to the workspace. |
+| `check_domain` | Domains | Live DNS & deliverability diagnostics on any domain without adding it. |
+| `list_domains` | Domains | List connected sending domains with deliverability scores and verification status. |
+| `add_domain` | Domains | Connect and register a new sending domain to the workspace. |
 | `list_mailboxes` | Mailboxes | List connected Google Workspace and Microsoft 365 mailboxes with daily limits. |
 | `add_mailbox` | Mailboxes | Connect an external mailbox for outbound outreach. |
 | `list_leads` | Leads | Search and filter contacts in your workspace. |
@@ -122,8 +122,8 @@ The server implements 30 core tools organized by functional area:
 | `get_launch_checklist` | Campaigns | Check domain alignment, sender warmup, and lead hygiene before launch. |
 | `launch_campaign` | Campaigns | Launch sequence sending (*requires confirm token*). |
 | `pause_campaign` | Campaigns | Immediately pause sending for a campaign. |
-| `get_campaign_stats` | Campaigns | Performance counters (sent, open, click, bounce, reply rates). |
-| `get_campaign_analytics` | Campaigns | Detailed performance broken down by mailbox provider, step, and variant. |
+| `get_campaign_stats` | Campaigns | Daily time-series email metrics for a campaign or all campaigns over time. |
+| `get_campaign_analytics` | Campaigns | Granular performance breakdown across email providers (Google, Microsoft), mailboxes, and sentiment. |
 | `get_unibox_filters` | Unibox | Retrieve unified inbox filter presets and label counts. |
 | `list_threads` | Unibox | List incoming recipient replies and conversation threads. |
 | `get_thread` | Unibox | Inspect full thread message history, headers, and lead details. |
